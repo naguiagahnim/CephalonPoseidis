@@ -6,8 +6,9 @@ pub async fn get_token() -> String {
     String::from(token)
 }
 
-pub async fn get_clan_cid() -> String {
+pub async fn get_clan_cid() -> u64 {
     load_dotenv!();
     let cid = env!("CLAN_ID");
-    String::from(cid)
+    let new_cid = cid.parse().unwrap();
+    new_cid
 }

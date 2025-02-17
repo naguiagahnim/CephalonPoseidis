@@ -83,8 +83,8 @@ impl WarframeMessenger {
             .unwrap_or("Faction inconnue")
     }
 
-    pub async fn announce() -> Result<String, Box<dyn std::error::Error>> {
-        let mut message = String::from("**Opérateur, le système a besoin de vous. J'ai pu récupérer ces informations pour vous aider :** \n");
+    pub async fn announce_cycles() -> Result<String, Box<dyn std::error::Error>> {
+        let mut message = String::from("**Opérateur, voici les informations sur les cycles actuels.** \n\n");
         let worldstate = WarframeApi::get_world_state().await?;
 
         message.push_str("__Cycles actuels__ \n");
@@ -106,7 +106,14 @@ impl WarframeMessenger {
 
         let zariman = WarframeApi::get_zariman_rotation(&worldstate).await;
         let translated_zariman = Self::translate_zariman(&zariman);
-        message.push_str(&format!("La faction occupant actuellement le Zariman est la faction {}.\n", translated_zariman));
+        message.push_str(&format!("La faction occupant actuellement le Zariman est la faction {}.", translated_zariman));
+
+        Ok(message)
+    }
+
+    pub async fn announce_weekly_reset() -> Result<String, Box<dyn std::error::Error>> {
+        let worldstate = WarframeApi::get_world_state().await?;
+        let mut message = String::from("**Opérateur, voici ce que j'ai pu récupérer sur la rotation hebdomadaire.\n\n**");
 
         message.push_str("\n__Chasse à l'Archonte__\n");
         if let Some((boss, missions, blood_pact)) = WarframeApi::get_archon_hunt(&worldstate).await {
