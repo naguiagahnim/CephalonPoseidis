@@ -1,5 +1,5 @@
 use super::api::WarframeApi;
-use std::collections::HashMap;
+use std::{collections::HashMap, error::Error};
 use once_cell::sync::Lazy;
 
 pub struct WarframeMessenger;
@@ -83,7 +83,7 @@ impl WarframeMessenger {
             .unwrap_or("Faction inconnue")
     }
 
-    pub async fn announce_cycles() -> Result<String, Box<dyn std::error::Error>> {
+    pub async fn announce_cycles() -> Result<String, Box<dyn Error + Send + Sync>> {
         let mut message = String::from("**Opérateur, voici les informations sur les cycles actuels.** \n\n");
         let worldstate = WarframeApi::get_world_state().await?;
 
@@ -111,7 +111,7 @@ impl WarframeMessenger {
         Ok(message)
     }
 
-    pub async fn announce_weekly_reset() -> Result<String, Box<dyn std::error::Error>> {
+    pub async fn announce_weekly_reset() -> Result<String, Box<dyn Error + Send + Sync>> {
         let worldstate = WarframeApi::get_world_state().await?;
         let mut message = String::from("**Opérateur, voici ce que j'ai pu récupérer sur la rotation hebdomadaire.\n\n**");
 
