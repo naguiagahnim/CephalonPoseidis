@@ -1,11 +1,10 @@
-use load_dotenv::load_dotenv;
 use serenity::all::ChannelId;
 use serenity::async_trait;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use tokio::time::{self, Duration};
 use CephalonPoseidis::config;
-use CephalonPoseidis::discord::{cycle_command, notifications};
+use CephalonPoseidis::discord::{notifications};
 
 struct Handler;
 
@@ -19,15 +18,16 @@ impl EventHandler for Handler {
             let channel_id = ChannelId::new(config::get_clan_cid().await);
 
             let now = time::Instant::now();
-            let next_hour = now + Duration::fromsecs(60 * (60 - (now.elapsed().as_secs() % 60)));
+            let next_hour = now + Duration::from_secs(60 * (60 - (now.elapsed().as_secs() % 60)));
             time::sleep_until(next_hour).await;
 
             let mut interval = time::interval(Duration::from_secs(3600)); // 1 heure
             loop {
                 interval.tick().await;
 
+
                 notifications::send_weekly_reset_notification(&ctx_clone, channel_id).await;
-                notifications::send_cycles_notification(&ctx_clone, channel_id, "Nom d'un item cycle").await; // Remplacez "Nom d'un item cycle" par la valeur appropriée
+                notifications::send_cycles_notification(&ctx_clone, channel_id).await;
             }
         });
     }
