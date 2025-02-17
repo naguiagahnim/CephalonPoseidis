@@ -1,16 +1,14 @@
 use reqwest;
 use serde_json::Value;
 
-use super::world_state;
-
 pub struct WarframeApi;
 
 impl WarframeApi {
 
     pub async fn get_world_state() -> Result<Value, reqwest::Error> {
         let url = "https://api.warframestat.us/pc/fr";
-        let response = reqwest::get(url).await?;
-        response.json().await
+        let body = reqwest::get(url).await?.json().await?;
+        Ok(body)
     }
 
     pub async fn get_duviri_emotions(world_state : &Value) -> Option<String> {
@@ -34,11 +32,7 @@ impl WarframeApi {
     }
 
     pub async fn get_deep_archimedia(world_state : &Value) -> Option<String> {
-        todo!("à faire")
-    }
-
-    pub async fn get_teshin_formas(world_state : &Value) -> Option<String> {
-        todo!("a")
+        todo!("quand l'api remarchera")
     }
 
     pub fn get_archon_hunt(world_state: &Value) -> Option<(String, Vec<String>, bool)> {
@@ -87,7 +81,4 @@ impl WarframeApi {
             .collect::<Vec<_>>()
             .into()
     }
-
-
-
 }
