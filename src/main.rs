@@ -2,6 +2,10 @@ use load_dotenv::load_dotenv;
 use serenity::async_trait;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
+use CephalonPoseidis::config;
+use CephalonPoseidis::warframe::{WorldState, WeeklyReset, Invasions};
+use CephalonPoseidis::discord::{commands, notifications};
+
 
 struct Handler;
 
@@ -9,24 +13,18 @@ struct Handler;
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} est connecté !", ready.user.name);
-        
-        if let Some(guild) = ready.guilds.first() {
-            if let Some(channel) = guild.id.channels(&ctx.http).await.unwrap().values().next() {
-                if let Err(why) = channel.id.say(&ctx.http, "Test").await {
-                    println!("Erreur d'envoi de message: {:?}", why);
-                }
-            }
-        }
     }
 }
+
+//TODO config tâches périodiques
 
 #[tokio::main]
 async fn main() {
     load_dotenv!();
-    let token = env!("DISCORD_TOKEN");
+    let token = config::get_token();
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
-    let mut client = Client::builder(&token, intents)
+    let mut client = Client::builder(&token.await.as_str(), intents)
         .event_handler(Handler)
         .await
         .expect("Erreur à la création du client");
