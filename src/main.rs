@@ -16,7 +16,14 @@ impl EventHandler for Handler {
     }
 }
 
-//TODO config tâches périodiques
+/*TODO config tâches périodiques dans main avec tokio::spawn du type : 
+tokio::spawn(async move {
+        let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600)); // 1 heure
+        loop {
+            interval.tick().await;
+            exemple ! : WorldState::update().await;
+            Invasions::check().await;
+*/
 
 #[tokio::main]
 async fn main() {
