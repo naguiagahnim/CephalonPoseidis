@@ -7,6 +7,7 @@ name = "CephalonPoseidis"
 version = "0.1.0"
 dependencies = [
  "load-dotenv",
+ "once_cell",
  "reqwest 0.12.12",
  "serde",
  "serde_json",

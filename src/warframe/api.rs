@@ -35,7 +35,7 @@ impl WarframeApi {
         todo!("quand l'api remarchera")
     }
 
-    pub fn get_archon_hunt(world_state: &Value) -> Option<(String, Vec<String>, bool)> {
+    pub async fn get_archon_hunt(world_state: &Value) -> Option<(String, Vec<String>, bool)> {
         let archon_hunt = world_state.get("archonHunt")?;
         
         let boss = archon_hunt.get("boss")?.as_str()?.to_string();
@@ -57,7 +57,7 @@ impl WarframeApi {
         }
     }
 
-    pub fn get_circuit(world_state: &Value) -> Option<Vec<(String, Vec<String>)>> {
+    pub async fn get_circuit(world_state: &Value) -> Option<Vec<(String, Vec<String>)>> {
         world_state.get("duviriCycle")?
             .get("choices")?
             .as_array()?
@@ -80,5 +80,34 @@ impl WarframeApi {
             .into_iter()
             .collect::<Vec<_>>()
             .into()
+    }
+
+    pub async fn get_orokin_rewards(world_state: &Value) -> Option<Vec<String>> {
+        let events = world_state.get("events")?.as_array()?;
+
+        let missions_with_orokin = events
+            .iter()
+            .filter_map(|event| {
+                let event_description = event.get("description").and_then(|v| v.as_str())?;
+                let rewards = event.get("rewards")?.as_array()?;
+
+                let has_orokin_reward = rewards.iter().any(|reward| {
+                    let item_string = reward.get("itemString").and_then(|v| v.as_str()).unwrap_or_default();
+                    item_string.contains("Catalyst") || item_string.contains("Reactor")
+                });
+
+                if has_orokin_reward {
+                    Some(event_description.to_string())
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>();
+
+        if missions_with_orokin.is_empty() {
+            None
+        } else {
+            Some(missions_with_orokin)
+        }
     }
 }
