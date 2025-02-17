@@ -19,7 +19,7 @@ pub async fn send_weekly_reset_notification(ctx: &Context, channel_id: ChannelId
     }
 }
 
-pub async fn send_cycles_notification(ctx: &Context, channel_id: ChannelId, item: &str) {
+pub async fn send_cycles_notification(ctx: &Context, channel_id: ChannelId) {
     let message_result = WarframeMessenger::announce_cycles().await;
 
     match message_result {
