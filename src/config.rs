@@ -12,3 +12,10 @@ pub async fn get_clan_cid() -> u64 {
     let new_cid = cid.parse().unwrap();
     new_cid
 }
+
+pub async fn get_guild_id() -> u64 {
+    load_dotenv!();
+    let gid = env!("GUILD_ID");
+    let guild_id = gid.parse().unwrap();
+    guild_id
+}

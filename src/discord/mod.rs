@@ -1,2 +1,2 @@
-pub mod cycle_command;
+pub mod commands;
 pub mod notifications;
