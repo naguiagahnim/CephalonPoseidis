@@ -1,0 +1,1 @@
+Le .env sur le desktop contient actuellement les données presse papiers.
