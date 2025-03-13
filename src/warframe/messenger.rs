@@ -137,7 +137,12 @@ impl WarframeMessenger {
         match WarframeApi::get_circuit(&worldstate).await {
             Some(circuits) => {
                 for (category, choices) in circuits {
-                    message.push_str(&format!("{}: ", category));
+                    if category == "hard" {
+                        message.push_str("Steel Path : ");
+                    }
+                    else {
+                        message.push_str("Normal : ");
+                    }
                     for choice in &choices {
                         message.push_str(&format!("{}, ", choice));
                     }
