@@ -2,8 +2,7 @@ use serenity::{
     async_trait,
     client::{Client, Context, EventHandler},
     model::{
-        gateway::Ready,
-        id::GuildId,
+        application::interaction::Interaction, gateway::Ready, id::GuildId, application::interaction::InteractionResponseType
     },
     prelude::*,
 };
@@ -40,6 +39,30 @@ impl EventHandler for Handler {
             .await;
 
         println!("Commandes Slash enregistrées.");
+    }
+
+    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+        if let Interaction::ApplicationCommand(command) = interaction {
+            println!("Commande Slash reçue: {:#?}", command);
+
+            let content = match command.data.name.as_str() {
+                "cycles" => commands::cycle_command::run(&ctx, &command).await,
+                "weekly_reset" => commands::weekly_reset_command::run(&ctx, &command).await,
+                _ => "Commande non implémentée".to_string(),
+            };
+
+            if let Err(why) = command
+                .create_interaction_response(&ctx.http, |response| {
+                    response.kind(InteractionResponseType::ChannelMessageWithSource)
+                        .interaction_response_data(|message| {
+                            message.content(content)
+                        })
+                })
+                .await
+            {
+                println!("Impossible de répondre à la commande : {}", why);
+            }
+        }
     }
 }
 

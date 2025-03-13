@@ -12,11 +12,11 @@ impl WarframeApi {
     }
 
     pub async fn get_duviri_emotions(world_state : &Value) -> Option<String> {
-        world_state["duviriCycle"]["mood"].as_str().map(String::from)
+        world_state["duviriCycle"]["state"].as_str().map(String::from)
     }
 
     pub async fn get_cetus_cycle(world_state : &Value) -> Option<String> {
-        world_state["cetuscycle"]["state"].as_str().map(String::from)
+        world_state["cetusCycle"]["state"].as_str().map(String::from)
     }
 
     pub async fn get_necralisk_bagarre(world_state : &Value) -> Option<String> {
