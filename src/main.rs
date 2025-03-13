@@ -3,53 +3,43 @@ use serenity::{
     client::{Client, Context, EventHandler},
     model::{
         gateway::Ready,
-        id::{GuildId, ChannelId},
+        id::GuildId,
     },
     prelude::*,
 };
 
 use CephalonPoseidis::config;
-use CephalonPoseidis::discord::{commands, notifications};
+use CephalonPoseidis::discord::commands;
 
 struct Handler;
 
-use serenity::{
+use serenity::
     framework::standard::
         StandardFramework
-    ,
-    model::interactions::{
-            Interaction, InteractionResponseType,
-        },
-};
+;
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} est connecté !", ready.user.name);
-    }
 
-    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if let Interaction::ApplicationCommand(command) = interaction {
-            println!("Received command interaction: {:#?}", command);
+        let guild_id = GuildId(config::get_guild_id().await);
 
-            let content = match command.data.name.as_str() {
-                "cycles" => commands::cycle_command::run(&ctx, &command).await,
-                "weekly_reset" => commands::weekly_reset_command::run(&ctx, &command).await,
-                _ => "Commande non implémentée".to_string(),
-            };
+        let _ = guild_id
+            .set_application_commands(&ctx.http, |commands| {
+                commands
+                    .create_application_command(|cmd| {
+                        commands::cycle_command::register_mut(cmd);
+                        cmd
+                    })
+                    .create_application_command(|cmd| {
+                        commands::weekly_reset_command::register_mut(cmd);
+                        cmd
+                    })
+            })
+            .await;
 
-            if let Err(why) = command
-                .create_interaction_response(&ctx.http, |response| {
-                    response.kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| {
-                            message.content(content)
-                        })
-                })
-                .await
-            {
-                println!("Impossible de répondre à la commande : {}", why);
-            }
-        }
+        println!("Commandes Slash enregistrées.");
     }
 }
 
@@ -60,7 +50,7 @@ async fn main() {
 
     let mut client = Client::builder(&token.await.as_str(), intents)
         .event_handler(Handler)
-        .framework(StandardFramework::new()) // Ajout du framework ici
+        .framework(StandardFramework::new())
         .await
         .expect("Erreur à la création du client");
 
