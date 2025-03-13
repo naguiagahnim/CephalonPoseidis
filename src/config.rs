@@ -1,21 +1,27 @@
-use load_dotenv::load_dotenv;
+use std::env;
+
+use dotenv::dotenv;
 
 pub async fn get_token() -> String {
-    load_dotenv!();
-    let token = env!("DISCORD_TOKEN");
-    String::from(token)
+    dotenv().ok();
+    match env::var("DISCORD_TOKEN") {
+        Ok(val) => val,
+        Err(e) => panic!("Erreur cl  token: {}", e),
+    }
 }
 
 pub async fn get_clan_cid() -> u64 {
-    load_dotenv!();
-    let cid = env!("CLAN_ID");
-    let new_cid = cid.parse().unwrap();
-    new_cid
+    dotenv().ok();
+    match env::var("CLAN_ID") {
+        Ok(val) => val.parse().expect("Invalid CLAN_ID format"),
+        Err(e) => panic!("Erreur cl channel clan: {}", e),
+    }
 }
 
 pub async fn get_guild_id() -> u64 {
-    load_dotenv!();
-    let gid = env!("GUILD_ID");
-    let guild_id = gid.parse().unwrap();
-    guild_id
+    dotenv().ok();
+    match env::var("GUILD_ID") {
+        Ok(val ) => val.parse().expect("Invalid GUILD_ID format"),
+        Err(e) => panic!("Erreur cl guild: {}", e),
+    }
 }
