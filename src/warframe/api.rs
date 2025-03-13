@@ -32,6 +32,7 @@ impl WarframeApi {
     }
 
     pub async fn get_deep_archimedia(world_state : &Value) -> Option<String> {
+        let _ = world_state;
         todo!("quand l'api remarchera")
     }
 

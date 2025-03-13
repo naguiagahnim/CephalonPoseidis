@@ -1,5 +1,7 @@
-use serenity::{all::*, prelude::*};
-use crate::warframe::messenger::{self, WarframeMessenger};
+
+use serenity::{client::Context, model::id::ChannelId};
+
+use crate::warframe::messenger::WarframeMessenger;
 
 pub async fn send_weekly_reset_notification(ctx: &Context, channel_id: ChannelId) {
     let message_result = WarframeMessenger::announce_weekly_reset().await;
