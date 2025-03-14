@@ -84,27 +84,32 @@ impl WarframeApi {
     }
 
     pub async fn get_orokin_rewards(world_state: &Value) -> Option<Vec<String>> {
-        let events = world_state.get("events")?.as_array()?;
-
-        let missions_with_orokin = events
+        let invasions = world_state.get("invasions")?.as_array()?;
+    
+        let missions_with_orokin = invasions
             .iter()
-            .filter_map(|event| {
-                let event_description = event.get("description").and_then(|v| v.as_str())?;
-                let rewards = event.get("rewards")?.as_array()?;
-
-                let has_orokin_reward = rewards.iter().any(|reward| {
-                    let item_string = reward.get("itemString").and_then(|v| v.as_str()).unwrap_or_default();
-                    item_string.contains("Catalyst") || item_string.contains("Reactor")
+            .filter_map(|invasion| {
+                let attacker_reward = invasion.get("attackerReward")?;
+                let defender_reward = invasion.get("defenderReward")?;
+    
+                let binding = vec![];
+                let attacker_items = attacker_reward.get("items").and_then(|v| v.as_array()).unwrap_or(&binding);
+                let binding = vec![];
+                let defender_items = defender_reward.get("items").and_then(|v| v.as_array()).unwrap_or(&binding);
+    
+                let has_orokin = attacker_items.iter().chain(defender_items.iter()).any(|item| {
+                    item.as_str().map_or(false, |s| s.contains("Catalyseur Orokin") || s.contains("Réacteur Orokin"))
                 });
-
-                if has_orokin_reward {
-                    Some(event_description.to_string())
+    
+                if has_orokin {
+                    let description = invasion.get("desc").and_then(|v| v.as_str()).unwrap_or("Invasion sans nom");
+                    Some(description.to_string())
                 } else {
                     None
                 }
             })
             .collect::<Vec<String>>();
-
+    
         if missions_with_orokin.is_empty() {
             None
         } else {
