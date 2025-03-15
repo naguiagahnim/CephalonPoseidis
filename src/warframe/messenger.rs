@@ -97,13 +97,13 @@ impl WarframeMessenger {
                 .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
-    
+
         let teshin_str = match WarframeApi::get_teshin(&worldstate).await {
             Some(teshin) => format!("{}", teshin),
             None => String::from("Aucune information sur Teshin."),
         };
         embed.field("__Teshin vend actuellement__", teshin_str, false);
-    
+
         let archon_str = if let Some((boss, missions, blood_pact)) = WarframeApi::get_archon_hunt(&worldstate).await {
             let mut archon = format!("L'Archonte actuel est : **{}**\n", boss);
             archon.push_str("Missions : ");
@@ -117,7 +117,7 @@ impl WarframeMessenger {
             String::from("Aucune chasse à l'Archonte active pour le moment.")
         };
         embed.field("__Chasse à l'Archonte__", archon_str, false);
-    
+
         let circuit_str = match WarframeApi::get_circuit(&worldstate).await {
             Some(circuits) => {
                 let mut text = String::new();
@@ -130,21 +130,53 @@ impl WarframeMessenger {
             None => String::from("Aucun circuit de Duviri disponible pour le moment."),
         };
         embed.field("__Circuit de Duviri__", circuit_str, false);
+
+        let invasion_str = match WarframeApi::get_world_state().await {
+            Ok(worldstate) => {
+                let invasions = worldstate.get("invasions").and_then(|v| v.as_array());
     
-        let orokin_str = match WarframeApi::get_orokin_rewards(&worldstate).await {
-            Some(missions) => {
-                if missions.is_empty() {
-                    String::from("Aucune mission avec récompense Orokin détectée.")
+                if let Some(invasions) = invasions {
+                    let mut text = String::new();
+                    for invasion in invasions {
+                        let attacker = invasion.get("attacker");
+                        let defender = invasion.get("defender");
+
+                        if let (Some(attacker_reward), Some(defender_reward)) = (attacker.and_then(|a| a.get("reward")), defender.and_then(|d| d.get("reward"))) {
+                            let attacker_items = attacker_reward.get("itemString").and_then(|v| v.as_str()).unwrap_or("");
+                            let defender_items = defender_reward.get("itemString").and_then(|v| v.as_str()).unwrap_or("");
+    
+                            if attacker_items.contains("Catalyseur Orokin") || attacker_items.contains("Réacteur Orokin")
+                                || defender_items.contains("Catalyseur Orokin") || defender_items.contains("Réacteur Orokin") {
+                                let node = invasion.get("node").and_then(|v| v.as_str()).unwrap_or("Lieu inconnu");
+                                let desc = invasion.get("desc").and_then(|v| v.as_str()).unwrap_or("Invasion inconnue");
+                                text.push_str(&format!("Invasion sur **{}**\n", node));
+                                if !attacker_items.is_empty() {
+                                    text.push_str(&format!("Récompense Attaquant : **{}**\n", attacker_items));
+                                }
+                                if !defender_items.is_empty() {
+                                    text.push_str(&format!("Récompense Défenseur : **{}**\n", defender_items));
+                                }
+                                text.push_str(&format!("Description : {}\n", desc));
+                            }
+                        }
+                    }
+    
+                    if text.is_empty() {
+                        String::from("Aucune invasion avec des récompenses Orokin détectée.")
+                    } else {
+                        text
+                    }
                 } else {
-                    missions.iter().map(|m| format!("- {}", m)).collect::<Vec<_>>().join("\n")
+                    String::from("Impossible de récupérer les invasions.")
                 }
             }
-            None => String::from("Impossible de récupérer les informations sur les récompenses Orokin."),
+            Err(_) => String::from("Impossible de récupérer les invasions."),
         };
-        embed.field("__Missions avec Récompenses Orokin__", orokin_str, false);
+        embed.field("__Invasions avec Récompenses Orokin__", invasion_str, false);
     
         Ok(embed)
     }
+    
     
 
     pub async fn embed_duviri() -> Result<CreateEmbed, Box<dyn Error + Send + Sync>> {
