@@ -84,76 +84,67 @@ impl WarframeMessenger {
             .unwrap_or("Faction inconnue")
     }
 
-    pub async fn announce_weekly_reset() -> Result<String, Box<dyn Error + Send + Sync>> {
+    pub async fn embed_weekly_reset() -> Result<CreateEmbed, Box<dyn Error + Send + Sync>> {
         let worldstate = WarframeApi::get_world_state().await?;
-        let mut message = String::from("**Opérateur, voici ce que j'ai pu récupérer sur la rotation hebdomadaire.\n\n**");
-
-        message.push_str("__Teshin vend actuellement :__\n");
-        let teshin = WarframeApi::get_teshin(&worldstate).await;
-        match teshin {
-            Some(teshin) => {
-                message.push_str(&format!("{}.\n", teshin));
-            }
-            None => {
-                message.push_str("Aucune information sur Teshin.\n");
-            }
-        }
-
-        message.push_str("\n__Chasse à l'Archonte__\n");
-        if let Some((boss, missions, blood_pact)) = WarframeApi::get_archon_hunt(&worldstate).await {
-            message.push_str(&format!("L'Archonte actuel est : {}.\n", boss));
-            message.push_str("Missions : ");
-            for mission in &missions {
-                message.push_str(&format!("{}, ", mission));
-            }
-            message.pop();
-            message.pop();
-            message.push_str(".\n");
-
+        let colour = Colour::from_rgb(174, 194, 191);
+    
+        let mut embed = CreateEmbed::default();
+        embed.title("__Rotation hebdomadaire__");
+        embed.author(|a| {
+            a.name("Céphalon Poseidis")
+                .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+                .url("https://github.com/naguiagahnim/CephalonPoseidis")
+        });
+        embed.colour(colour);
+    
+        let teshin_str = match WarframeApi::get_teshin(&worldstate).await {
+            Some(teshin) => format!("{}", teshin),
+            None => String::from("Aucune information sur Teshin."),
+        };
+        embed.field("__Teshin vend actuellement__", teshin_str, false);
+    
+        let archon_str = if let Some((boss, missions, blood_pact)) = WarframeApi::get_archon_hunt(&worldstate).await {
+            let mut archon = format!("L'Archonte actuel est : **{}**\n", boss);
+            archon.push_str("Missions : ");
+            archon.push_str(&missions.join(", "));
+            archon.push('\n');
             if blood_pact {
-                message.push_str("Un pacte de sang passé dans des temps anciens doit être honoré. Kyrn et Héphaï, vous devrez réaliser cette chasse ensemble.\n");
+                archon.push_str("Un pacte de sang passé dans des temps anciens doit être honoré. Kyrn et Héphaï, vous devrez réaliser cette chasse ensemble.");
             }
+            archon
         } else {
-            message.push_str("Aucune chasse à l'Archonte active pour le moment.\n");
-        }
-
-        message.push_str("\n__Circuit de Duviri__\n");
-        match WarframeApi::get_circuit(&worldstate).await {
+            String::from("Aucune chasse à l'Archonte active pour le moment.")
+        };
+        embed.field("__Chasse à l'Archonte__", archon_str, false);
+    
+        let circuit_str = match WarframeApi::get_circuit(&worldstate).await {
             Some(circuits) => {
+                let mut text = String::new();
                 for (category, choices) in circuits {
-                    if category == "hard" {
-                        message.push_str("Steel Path : ");
-                    }
-                    else {
-                        message.push_str("Normal : ");
-                    }
-                    for choice in &choices {
-                        message.push_str(&format!("{}, ", choice));
-                    }
-                    message.pop();
-                    message.pop();
-                    message.push_str(".\n");
+                    let mode = if category == "hard" { "Steel Path" } else { "Normal" };
+                    text.push_str(&format!("**{} :** {}\n", mode, choices.join(", ")));
                 }
+                text
             }
-            None => message.push_str("Aucun circuit de Duviri disponible pour le moment.\n"),
+            None => String::from("Aucun circuit de Duviri disponible pour le moment."),
         };
-
-        message.push_str("\n__Missions avec Récompenses Orokin__\n");
-        match WarframeApi::get_orokin_rewards(&worldstate).await {
+        embed.field("__Circuit de Duviri__", circuit_str, false);
+    
+        let orokin_str = match WarframeApi::get_orokin_rewards(&worldstate).await {
             Some(missions) => {
-                if !missions.is_empty() {
-                    for mission in &missions {
-                        message.push_str(&format!("- {} \n", mission));
-                    }
+                if missions.is_empty() {
+                    String::from("Aucune mission avec récompense Orokin détectée.")
                 } else {
-                    message.push_str("Aucune mission avec récompense Orokin détectée.\n");
+                    missions.iter().map(|m| format!("- {}", m)).collect::<Vec<_>>().join("\n")
                 }
             }
-            None => message.push_str("Impossible de récupérer les informations sur les récompenses Orokin.\n"),
+            None => String::from("Impossible de récupérer les informations sur les récompenses Orokin."),
         };
-
-        Ok(message)
+        embed.field("__Missions avec Récompenses Orokin__", orokin_str, false);
+    
+        Ok(embed)
     }
+    
 
     pub async fn embed_duviri() -> Result<CreateEmbed, Box<dyn Error + Send + Sync>> {
         let worldstate = WarframeApi::get_world_state().await?;
@@ -169,9 +160,9 @@ impl WarframeMessenger {
              .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
-        embed.title("Duviri");
+        embed.title("__Duviri__");
         embed.colour(colour);
-        embed.description(&format!("L'émotion régissant actuellement Duviri est : {}\n", translated_emotion));
+        embed.description(&format!("L'émotion régissant actuellement Duviri est : **{}**\n", translated_emotion));
         if translated_emotion == "Joie" {
             embed.image("https://preview.redd.it/duviri-and-its-paragons-of-emotion-v0-nxu2j00nn1wa1.png?width=1080&crop=smart&auto=webp&s=ed0f760c4bced39bcf90e2ade68dfaa665981e21");
         }
@@ -203,14 +194,14 @@ impl WarframeMessenger {
         let colour = Colour::from_rgb(174, 194, 191);
 
         let mut embed = CreateEmbed::default();
-        embed.title("Cetus");
+        embed.title("__Cetus__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
              .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
-        embed.description(&format!("Il fait {} sur Cetus.\n", translated_cetus));
+        embed.description(&format!("Il fait **{}** sur Cetus.\n", translated_cetus));
         if translated_cetus == "jour" {
             embed.image("https://static.wikia.nocookie.net/warframe/images/6/69/Cetus.png/revision/latest/scale-to-width-down/1000?cb=20250112114907");
         }
@@ -232,14 +223,14 @@ impl WarframeMessenger {
         let colour = Colour::from_rgb(174, 194, 191);
 
         let mut embed = CreateEmbed::default();
-        embed.title("Puy de Cambion");
+        embed.title("__Puy de Cambion__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
              .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
-        embed.description(&format!("Le Wyrm putrescent {} domine le Puy de Cambion, pour l'instant.\n", translated_wyrm));
+        embed.description(&format!("Le Wyrm putrescent **{}** domine le Puy de Cambion, pour l'instant.\n", translated_wyrm));
         if translated_wyrm == "Vome" {
             embed.image("https://static.wikia.nocookie.net/warframe/images/1/11/VomeWyrm.png/revision/latest/scale-to-width-down/1000?cb=20230913133813&path-prefix=fr");
         }
@@ -261,14 +252,14 @@ impl WarframeMessenger {
         let colour = Colour::from_rgb(174, 194, 191);
 
         let mut embed = CreateEmbed::default();
-        embed.title("Vallée Orbis");
+        embed.title("__Vallée Orbis__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
              .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
-        embed.description(&format!("Il fait {} dans la Vallée Orbis.\n", translated_vallis));
+        embed.description(&format!("Il fait **{}** dans la Vallée Orbis.\n", translated_vallis));
         embed.image("https://static.wikia.nocookie.net/warframe/images/4/4e/Vall%C3%A9e_Orbis.jpg/revision/latest/scale-to-width-down/1000?cb=20190107122459&path-prefix=fr");
         Ok(embed)
     }
@@ -282,14 +273,14 @@ impl WarframeMessenger {
         let colour = Colour::from_rgb(174, 194, 191);
 
         let mut embed = CreateEmbed::default();
-        embed.title("Les Anges du Zariman");
+        embed.title("__Les Anges du Zariman__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
              .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
-        embed.description(&format!("Les {} occupent actuellement le Zariman.", translated_zariman));
+        embed.description(&format!("Les **{}** occupent actuellement le Zariman.", translated_zariman));
         if translated_zariman == "Grineer" {
             embed.image("https://static.wikia.nocookie.net/warframe/images/7/71/GrineerLancier.jpg/revision/latest?cb=20130922222239&path-prefix=fr");
         }
