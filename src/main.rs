@@ -22,9 +22,9 @@ impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} est connecté !", ready.user.name);
 
-        let guild_id = GuildId(config::get_guild_id().await);
+        let guild_pp_id = GuildId(config::get_guild_pp_id().await);
 
-        let _ = guild_id
+        let _ = guild_pp_id
             .set_application_commands(&ctx.http, |commands| {
                 commands
                     .create_application_command(|cmd| {
@@ -37,6 +37,38 @@ impl EventHandler for Handler {
                     })
             })
             .await;
+
+            let guild_cl_id = GuildId(config::get_guild_cl_id().await);
+
+            let _ = guild_cl_id
+                .set_application_commands(&ctx.http, |commands| {
+                    commands
+                        .create_application_command(|cmd| {
+                            commands::cycle_command::register_mut(cmd);
+                            cmd
+                        })
+                        .create_application_command(|cmd| {
+                            commands::weekly_reset_command::register_mut(cmd);
+                            cmd
+                        })
+                })
+                .await;
+
+                let guild_di_id = GuildId(config::get_guild_di_id().await);
+
+                let _ = guild_di_id
+                    .set_application_commands(&ctx.http, |commands| {
+                        commands
+                            .create_application_command(|cmd| {
+                                commands::cycle_command::register_mut(cmd);
+                                cmd
+                            })
+                            .create_application_command(|cmd| {
+                                commands::weekly_reset_command::register_mut(cmd);
+                                cmd
+                            })
+                    })
+                    .await;
 
         println!("Commandes Slash enregistrées.");
     }
