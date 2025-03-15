@@ -33,7 +33,7 @@ pub mod weekly_reset_command {
     }
     
     pub async fn run(ctx: &Context, interaction: &ApplicationCommandInteraction) -> String {
-        notifications::send_weekly_reset_notification(ctx, interaction.channel_id).await;
+        notifications::send_weekly_notification(ctx, interaction.channel_id).await;
         "Les informations sur le reset hebdomadaire ont été envoyées.".to_string()
     }
 }

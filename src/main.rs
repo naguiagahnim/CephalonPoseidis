@@ -44,26 +44,34 @@ impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             println!("Commande Slash reçue: {:#?}", command);
-
-            let content = match command.data.name.as_str() {
-                "cycles" => commands::cycle_command::run(&ctx, &command).await,
-                "weekly_reset" => commands::weekly_reset_command::run(&ctx, &command).await,
-                _ => "Commande non implémentée".to_string(),
-            };
-
+    
             if let Err(why) = command
                 .create_interaction_response(&ctx.http, |response| {
-                    response.kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| {
-                            message.content(content)
-                        })
+                    response.kind(InteractionResponseType::DeferredChannelMessageWithSource)
                 })
                 .await
             {
-                println!("Impossible de répondre à la commande : {}", why);
+                eprintln!("Putain d'erreur dans le defer : {:?}", why);
+                return;
+            }
+    
+            let content = match command.data.name.as_str() {
+                "cycles" => commands::cycle_command::run(&ctx, &command).await,
+                "weekly_reset" => commands::weekly_reset_command::run(&ctx, &command).await,
+                _ => "Commande non implémentée.".to_string(),
+            };
+    
+            if let Err(why) = command
+                .edit_original_interaction_response(&ctx.http, |resp| {
+                    resp.content(content)
+                })
+                .await
+            {
+                eprintln!("Impossible de modifier la réponse : {:?}", why);
             }
         }
     }
+    
 }
 
 #[tokio::main]

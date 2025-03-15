@@ -116,4 +116,8 @@ impl WarframeApi {
             Some(missions_with_orokin)
         }
     }
+
+    pub async fn get_teshin(world_state: &Value) -> Option<String> {
+        world_state["steelPath"]["currentReward"]["name"].as_str().map(String::from)
+    }
 }
