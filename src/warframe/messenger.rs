@@ -155,7 +155,7 @@ impl WarframeMessenger {
         };
 
         message.push_str("\n__Missions avec Récompenses Orokin__\n");
-        /*match WarframeApi::get_orokin_rewards(&worldstate).await {
+        match WarframeApi::get_orokin_rewards(&worldstate).await {
             Some(missions) => {
                 if !missions.is_empty() {
                     for mission in &missions {
@@ -166,8 +166,7 @@ impl WarframeMessenger {
                 }
             }
             None => message.push_str("Impossible de récupérer les informations sur les récompenses Orokin.\n"),
-        };*/
-        message.push_str("En cours de développement...");
+        };
 
         Ok(message)
     }
