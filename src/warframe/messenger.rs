@@ -115,6 +115,17 @@ impl WarframeMessenger {
         let worldstate = WarframeApi::get_world_state().await?;
         let mut message = String::from("**Opérateur, voici ce que j'ai pu récupérer sur la rotation hebdomadaire.\n\n**");
 
+        message.push_str("__Teshin vend actuellement :__\n");
+        let teshin = WarframeApi::get_teshin(&worldstate).await;
+        match teshin {
+            Some(teshin) => {
+                message.push_str(&format!("{}.\n", teshin));
+            }
+            None => {
+                message.push_str("Aucune information sur Teshin.\n");
+            }
+        }
+
         message.push_str("\n__Chasse à l'Archonte__\n");
         if let Some((boss, missions, blood_pact)) = WarframeApi::get_archon_hunt(&worldstate).await {
             message.push_str(&format!("L'Archonte actuel est : {}.\n", boss));
