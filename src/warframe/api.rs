@@ -89,21 +89,21 @@ impl WarframeApi {
         let missions_with_orokin = invasions
             .iter()
             .filter_map(|invasion| {
-                let attacker_reward = invasion.get("attackerReward")?;
-                let defender_reward = invasion.get("defenderReward")?;
+                let attacker = invasion.get("attacker")?;
+                let defender = invasion.get("defender")?;
+                let attacker_reward = attacker.get("reward")?;
+                let defender_reward = defender.get("reward")?;
     
-                let binding = vec![];
-                let attacker_items = attacker_reward.get("items").and_then(|v| v.as_array()).unwrap_or(&binding);
-                let binding = vec![];
-                let defender_items = defender_reward.get("items").and_then(|v| v.as_array()).unwrap_or(&binding);
+                let attacker_items = attacker_reward.get("itemString").and_then(|v| v.as_str()).unwrap_or("");
+                let defender_items = defender_reward.get("itemString").and_then(|v| v.as_str()).unwrap_or("");
     
-                let has_orokin = attacker_items.iter().chain(defender_items.iter()).any(|item| {
-                    item.as_str().map_or(false, |s| s.contains("Catalyseur Orokin") || s.contains("Réacteur Orokin"))
-                });
+                let has_orokin = attacker_items.contains("Catalyseur Orokin") || attacker_items.contains("Réacteur Orokin")
+                    || defender_items.contains("Catalyseur Orokin") || defender_items.contains("Réacteur Orokin");
     
                 if has_orokin {
-                    let description = invasion.get("desc").and_then(|v| v.as_str()).unwrap_or("Invasion sans nom");
-                    Some(description.to_string())
+                    let node = invasion.get("node").and_then(|v| v.as_str()).unwrap_or("Lieu inconnu");
+                    let desc = invasion.get("desc").and_then(|v| v.as_str()).unwrap_or("Invasion inconnue");
+                    Some(format!("{} - {}", node, desc))
                 } else {
                     None
                 }
@@ -116,6 +116,7 @@ impl WarframeApi {
             Some(missions_with_orokin)
         }
     }
+    
 
     pub async fn get_teshin(world_state: &Value) -> Option<String> {
         world_state["steelPath"]["currentReward"]["name"].as_str().map(String::from)
