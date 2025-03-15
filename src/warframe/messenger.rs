@@ -90,9 +90,10 @@ impl WarframeMessenger {
     
         let mut embed = CreateEmbed::default();
         embed.title("__Rotation hebdomadaire__");
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350480386349727854/calendar.png?ex=67d6e45e&is=67d592de&hm=459a2d346a7ccfab234f306ff82e62b6f4ee8a39a2039175321c3ed20c44e5c6&=&format=webp&quality=lossless");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-                .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+                .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
                 .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
@@ -157,9 +158,10 @@ impl WarframeMessenger {
         let mut embed = CreateEmbed::default();
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350484356694806528/ProteaTemporalAnchor1.png?ex=67d6e811&is=67d59691&hm=c941670cb5da99314bb51d83ea3d764ef34999bd932ebbe9887ef5d2f7351bbd&=&format=webp&quality=lossless");
         embed.title("__Duviri__");
         embed.colour(colour);
         embed.description(&format!("L'émotion régissant actuellement Duviri est : **{}**\n", translated_emotion));
@@ -197,9 +199,10 @@ impl WarframeMessenger {
         embed.title("__Cetus__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350484356694806528/ProteaTemporalAnchor1.png?ex=67d6e811&is=67d59691&hm=c941670cb5da99314bb51d83ea3d764ef34999bd932ebbe9887ef5d2f7351bbd&=&format=webp&quality=lossless");
         embed.colour(colour);
         embed.description(&format!("Il fait **{}** sur Cetus.\n", translated_cetus));
         if translated_cetus == "jour" {
@@ -224,9 +227,10 @@ impl WarframeMessenger {
 
         let mut embed = CreateEmbed::default();
         embed.title("__Puy de Cambion__");
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350484356694806528/ProteaTemporalAnchor1.png?ex=67d6e811&is=67d59691&hm=c941670cb5da99314bb51d83ea3d764ef34999bd932ebbe9887ef5d2f7351bbd&=&format=webp&quality=lossless");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
         embed.colour(colour);
@@ -255,9 +259,10 @@ impl WarframeMessenger {
         embed.title("__Vallée Orbis__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350484356694806528/ProteaTemporalAnchor1.png?ex=67d6e811&is=67d59691&hm=c941670cb5da99314bb51d83ea3d764ef34999bd932ebbe9887ef5d2f7351bbd&=&format=webp&quality=lossless");
         embed.colour(colour);
         embed.description(&format!("Il fait **{}** dans la Vallée Orbis.\n", translated_vallis));
         embed.image("https://static.wikia.nocookie.net/warframe/images/4/4e/Vall%C3%A9e_Orbis.jpg/revision/latest/scale-to-width-down/1000?cb=20190107122459&path-prefix=fr");
@@ -276,9 +281,10 @@ impl WarframeMessenger {
         embed.title("__Les Anges du Zariman__");
         embed.author(|a| {
             a.name("Céphalon Poseidis")
-             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550213865865246/LOGO_couleurs1.png?ex=67d6261c&is=67d4d49c&hm=d6a1750975a0173c9cc8da7cf362060d236b93966a067705cd5c1cd3f1d4a2b9&=&format=webp&quality=lossless&width=1683&height=856")
+             .icon_url("https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67d6260e&is=67d4d48e&hm=f6be4661e41af8e89bc47f0b758a7f3c1ff7733e258d8dc7f6fc0f4fb881a643&=&format=webp&quality=lossless")
              .url("https://github.com/naguiagahnim/CephalonPoseidis")
         });
+        embed.thumbnail("https://media.discordapp.net/attachments/744597420096094282/1350484356694806528/ProteaTemporalAnchor1.png?ex=67d6e811&is=67d59691&hm=c941670cb5da99314bb51d83ea3d764ef34999bd932ebbe9887ef5d2f7351bbd&=&format=webp&quality=lossless");
         embed.colour(colour);
         embed.description(&format!("Les **{}** occupent actuellement le Zariman.", translated_zariman));
         if translated_zariman == "Grineer" {
