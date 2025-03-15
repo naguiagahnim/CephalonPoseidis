@@ -1,6 +1,7 @@
 use super::api::WarframeApi;
 use std::{collections::HashMap, error::Error};
 use once_cell::sync::Lazy;
+use serenity::{builder::{CreateEmbed, CreateEmbedAuthor}, model::prelude::Embed};
 
 pub struct WarframeMessenger;
 
@@ -87,10 +88,7 @@ impl WarframeMessenger {
         let mut message = String::from("**Opérateur, voici les informations sur les cycles actuels.** \n\n");
         let worldstate = WarframeApi::get_world_state().await?;
 
-        message.push_str("__Cycles actuels__ \n");
-        let emotion = WarframeApi::get_duviri_emotions(&worldstate).await;
-        let translated_emotion = Self::translate_emotion(&emotion);
-        message.push_str(&format!("L'émotion régissant actuellement Duviri est : {}\n", translated_emotion));
+        announce_duviri(&mut message, &worldstate).await;
 
         let cetus = WarframeApi::get_cetus_cycle(&worldstate).await;
         let translated_cetus = Self::translate_cetus(&cetus);
@@ -171,4 +169,14 @@ impl WarframeMessenger {
 
         Ok(message)
     }
+}
+
+async fn announce_duviri(worldstate: &serde_json::Value) -> Result<Embed, Box<dyn Error + Send + Sync>> {
+    let author = CreateEmbedAuthor::default().name("Céphalon Poseidis").icon_url("../data/images/logo.png").url("https://github.com/naguiagahnim/CephalonPoseidis");
+    let embed = CreateEmbed::default().set_author(author);
+    //message.push_str("__Cycles actuels__ \n");
+    let emotion = WarframeApi::get_duviri_emotions(worldstate).await;
+    let translated_emotion = Self::translate_emotion(&emotion);
+    message.push_str(&format!("L'émotion régissant actuellement Duviri est : {}\n", translated_emotion));
+    Ok(embed)
 }
