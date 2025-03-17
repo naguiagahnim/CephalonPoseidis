@@ -22,7 +22,7 @@ impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} est connecté !", ready.user.name);
 
-        let guild_pp_id = GuildId(config::get_guild_pp_id().await);
+        let guild_pp_id = GuildId(config::get_guild_pp_id());
 
         let _ = guild_pp_id
             .set_application_commands(&ctx.http, |commands| {
@@ -38,7 +38,7 @@ impl EventHandler for Handler {
             })
             .await;
 
-            let guild_cl_id = GuildId(config::get_guild_cl_id().await);
+            let guild_cl_id = GuildId(config::get_guild_cl_id());
 
             let _ = guild_cl_id
                 .set_application_commands(&ctx.http, |commands| {
@@ -54,7 +54,7 @@ impl EventHandler for Handler {
                 })
                 .await;
 
-                let guild_di_id = GuildId(config::get_guild_di_id().await);
+                let guild_di_id = GuildId(config::get_guild_di_id());
 
                 let _ = guild_di_id
                     .set_application_commands(&ctx.http, |commands| {
@@ -111,7 +111,7 @@ async fn main() {
     let token = config::get_token();
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
-    let mut client = Client::builder(&token.await.as_str(), intents)
+    let mut client = Client::builder(&token.as_str(), intents)
         .event_handler(Handler)
         .framework(StandardFramework::new())
         .await
