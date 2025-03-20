@@ -36,86 +36,13 @@ pub async fn send_cycles_notification(ctx: &Context, channel_id: ChannelId) {
         match embed_result {
             Ok(embed) => {
                 if let Err(err) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                    eprintln!("Putain d'erreur en envoyant l'embed : {:?}", err);
+                    eprintln!("Erreur en envoyant l'embed : {:?}", err);
                 }
             }
             Err(err) => {
                 eprintln!("Erreur dans la génération de l'embed : {:?}", err);
                 let _ = channel_id.say(&ctx.http, "Erreur dans la génération d'un des embeds, bordel.").await;
             }
-        }
-    }
-}
-
-
-pub async fn send_duviri_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_duviri().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur: {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Erreur : {:?}", err);
-            if let Err(why) = channel_id.say(&ctx.http, "Impossible de générer le message").await {
-                eprintln!("Erreur pendant l'envoi {:?}", why);
-            }
-        }
-    }
-}
-
-pub async fn send_cetus_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_cetus().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur en envoyant : {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Erreur lors de la génération : {:?}", err);
-            let _ = channel_id.say(&ctx.http, "Impossible de générer l’embed Cetus").await;
-        }
-    }
-}
-
-pub async fn send_necralisk_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_necralisk().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur pendant l’envoi de l’embed Necralisk: {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Impossible de générer l’embed Necralisk: {:?}", err);
-            let _ = channel_id.say(&ctx.http, "L'envoie a raté.").await;
-        }
-    }
-}
-
-pub async fn send_vallis_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_vallis().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur lors de l’envoi de l’embed Vallis: {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Erreur de génération de l’embed Vallis: {:?}", err);
-            let _ = channel_id.say(&ctx.http, "Embed Vallis n'a pas pu s'envoyer.").await;
-        }
-    }
-}
-
-pub async fn send_zariman_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_zariman().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur à l’envoi de l’embed Zariman: {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Erreur Zariman: {:?}", err);
-            let _ = channel_id.say(&ctx.http, "Embed Zariman indisponible.").await;
         }
     }
 }
