@@ -46,17 +46,3 @@ pub async fn send_cycles_notification(ctx: &Context, channel_id: ChannelId) {
         }
     }
 }
-
-pub async fn send_weekly_embed(ctx: &Context, channel_id: ChannelId) {
-    match WarframeMessenger::embed_weekly_reset().await {
-        Ok(embed) => {
-            if let Err(why) = channel_id.send_message(&ctx.http, |m| m.set_embed(embed)).await {
-                eprintln!("Erreur en envoyant : {:?}", why);
-            }
-        }
-        Err(err) => {
-            eprintln!("Erreur lors de la génération : {:?}", err);
-            let _ = channel_id.say(&ctx.http, "Impossible de générer l’embed").await;
-        }
-    }
-}
