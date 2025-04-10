@@ -63,4 +63,4 @@ This bot is specifically designed for my needs and has limited modularity. Any m
 
 ## Credits
 
-Clan logo by Themaninthewall678, the artist of our clan.
+Clan logo by Themaninthewall678.
