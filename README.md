@@ -2,7 +2,7 @@
     <h1 align="center">Céphalon Poseidis</h1>
 </p>
 <p align="center">
-  <img src="https://media.discordapp.net/attachments/1191550053014311086/1191550151391727708/LOGO_ZEBI.png?ex=67f86d0e&is=67f71b8e&hm=c2255dd56ee54eb3f35ffdb9fe93b30e1c6e812bd8582da99d7d08731af8768f&=&format=webp&quality=lossless&width=160&height=160" alt="Clan Logo">
+  <img src="https://github.com/naguiagahnim/CephalonPoseidis/blob/master/assets/logo.png" alt="Clan Logo">
 </p>
 <p align="center">
     <em><code>❯ Cycles, Weekly Reset and more to come</code></em>
