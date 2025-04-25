@@ -16,7 +16,7 @@
     <em>Built with:</em>
 </p>
 <p align="center">
-	<img src="https://img.shields.io/badge/Rust-%23000000.svg?style=flat&logo=rust&logoColor=white" alt="Rust">
+	<img src="https://img.shields.io/badge/Rust-%23ff00bc.svg?style=flat&logo=rust&logoColor=white" alt="Rust">
 </p>
 
 <br>
